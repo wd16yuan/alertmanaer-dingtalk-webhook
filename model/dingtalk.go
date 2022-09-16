@@ -10,7 +10,7 @@ type At struct {
 
 type DingTalkMarkdown struct {
 	MsgType  string    `json:"msgtype"`
-	At       *At       `json:at`
+	At       *At       `json:"at"`
 	Markdown *Markdown `json:"markdown"`
 }
 
