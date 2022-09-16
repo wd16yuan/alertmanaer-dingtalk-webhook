@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 	if err := notifier.CheckTokenAndSecret(token, secret); err != nil {
-		fmt.Printf("token or secret format error. [ %s ]", err.Error())
+		fmt.Printf("token or secret inspection failed. [ %s ]", err.Error())
 		return
 	}
 

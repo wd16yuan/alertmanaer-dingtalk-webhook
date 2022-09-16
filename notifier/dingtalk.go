@@ -148,27 +148,30 @@ func EncryptString(cipherText string) (plainText string, err error) {
 	return
 }
 
-func PrintEncryptTokenAndSecret(token, secret string) {
-	token_, err := EncryptString(token)
-	if err != nil {
-		fmt.Printf("token '%s' encrypt fail. Error: %s \n", token, err.Error())
+func PrintEncryptTokenAndSecret(values ...string) {
+	for _, value := range values {
+		value_, err := EncryptString(value)
+		if err != nil {
+			fmt.Printf("'%s' encrypt fail. Error: %s \n", value, err.Error())
+			continue
+		}
+		fmt.Printf("Encrypt '%s': %s\n", value, value_)
 	}
-	secret_, err := EncryptString(secret)
-	if err != nil {
-		fmt.Printf("secret '%s' encrypt fail. Error: %s \n", secret, err.Error())
-	}
-	fmt.Printf("Encrypt Token: %s\nEncrypt Secret: %s\n", token_, secret_)
 }
 
-func CheckTokenAndSecret(token, secret string) (err error) {
-	token_, err := DecryptString(token)
-	if err != nil {
-		return
+func CheckTokenAndSecret(values ...string) (err error) {
+	for _, value := range values {
+		var value_ string
+		value_, err = DecryptString(value)
+		if err != nil {
+			return
+		}
+		err = cache.Set([]byte(value), []byte(value_), expire)
+		if err != nil {
+			return
+		}
 	}
-	cache.Set([]byte(token), []byte(token_), expire)
-	secret_, err := DecryptString(secret)
-	cache.Set([]byte(secret), []byte(secret_), expire)
-	return err
+	return
 }
 
 func GetCacheString(key string) (value string, err error) {
