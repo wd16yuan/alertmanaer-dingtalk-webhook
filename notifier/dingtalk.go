@@ -16,6 +16,8 @@ import (
 
 	"alertmanaer-dingtalk-webhook/model"
 	"alertmanaer-dingtalk-webhook/transformer"
+
+	"github.com/coocood/freecache"
 )
 
 var (
@@ -23,7 +25,14 @@ var (
 	URLInvalidErr   = errors.New("dingtalk robot url invalid")
 	KeyByte         = []byte("NRHp_op=K7rSI_#dft+3gQpYqlSu^VWT")
 	IV              = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
+	cache           *freecache.Cache
+	expire          = 60 * 60
 )
+
+func init() {
+	cacheSize := 10 * 1024 * 1024
+	cache = freecache.NewCache(cacheSize)
+}
 
 // Send send markdown message to dingtalk
 func Send(notification model.Notification, defaultUrl, token, secret string) (err error) {
@@ -55,13 +64,13 @@ func Send(notification model.Notification, defaultUrl, token, secret string) (er
 		return URLInvalidErr
 	}
 
-	token, err = DecryptString(token)
+	token, err = GetCacheString(token)
 	if err != nil {
 		return err
 	}
 
 	if secret != "" {
-		secret, err = DecryptString(secret)
+		secret, err = GetCacheString(secret)
 		if err != nil {
 			return err
 		}
@@ -152,10 +161,29 @@ func PrintEncryptTokenAndSecret(token, secret string) {
 }
 
 func CheckTokenAndSecret(token, secret string) (err error) {
-	_, err = DecryptString(token)
+	token_, err := DecryptString(token)
 	if err != nil {
 		return
 	}
-	_, err = DecryptString(secret)
+	cache.Set([]byte(token), []byte(token_), expire)
+	secret_, err := DecryptString(secret)
+	cache.Set([]byte(secret), []byte(secret_), expire)
 	return err
+}
+
+func GetCacheString(key string) (value string, err error) {
+	valueByte, err := cache.Get([]byte(key))
+	if err != nil && err != freecache.ErrNotFound {
+		return
+	}
+	if err == freecache.ErrNotFound {
+		value, err = DecryptString(key)
+		if err != nil {
+			return
+		}
+		cache.Set([]byte(key), []byte(value), expire)
+		return
+	}
+	value = string(valueByte)
+	return
 }
