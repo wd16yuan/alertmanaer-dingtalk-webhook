@@ -7,7 +7,11 @@ import (
 	"alertmanaer-dingtalk-webhook/model"
 )
 
-// TransformToMarkdown transform alertmanager notification to dingtalk markdow message
+//@function: TransformToMarkdown
+//@description: 将notification转换为钉钉markdow消息格式
+//@param: notification model.Notification
+//@return: markdown *model.DingTalkMarkdown, robotURL, token, secret string, err error
+
 func TransformToMarkdown(notification model.Notification) (markdown *model.DingTalkMarkdown, robotURL, token, secret string, err error) {
 
 	groupKey := notification.GroupKey
@@ -20,9 +24,9 @@ func TransformToMarkdown(notification model.Notification) (markdown *model.DingT
 
 	var buffer bytes.Buffer
 
-	buffer.WriteString(fmt.Sprintf("### 通知组%s(当前状态:%s) \n", groupKey, status))
+	buffer.WriteString(fmt.Sprintf("### 通知组%s (当前状态：%s) \n", groupKey, status))
 
-	buffer.WriteString(fmt.Sprintf("#### 告警项:\n"))
+	buffer.WriteString(fmt.Sprintf("#### 告警项：\n"))
 
 	for _, alert := range notification.Alerts {
 		annotations := alert.Annotations
