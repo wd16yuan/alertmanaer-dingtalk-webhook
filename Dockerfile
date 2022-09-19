@@ -7,4 +7,4 @@ FROM alpine:3.16.2
 RUN apk --no-cache add ca-certificates
 WORKDIR /data
 COPY --from=builder /alertmanaer-dingtalk-webhook/app /data/
-ENTRYPOINT ["./app", "-secret=xxxxxx", "-token=xxxxx"]
+ENTRYPOINT ["./app"]
