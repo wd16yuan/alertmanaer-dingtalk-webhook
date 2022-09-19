@@ -34,7 +34,11 @@ func ParseCommand() *model.DingTalkHook {
 	token = strings.TrimSpace(token)
 	secret = strings.TrimSpace(secret)
 
-	hook := &model.DingTalkHook{defaultUrl, token, secret}
+	hook := &model.DingTalkHook{
+		Url:    defaultUrl,
+		Token:  token,
+		Secret: secret,
+	}
 
 	if c {
 		hook.ConvertTokenAndSecretToCiphertext()

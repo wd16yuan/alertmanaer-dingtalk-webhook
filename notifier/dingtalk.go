@@ -28,15 +28,19 @@ func Send(notification model.Notification, hook *model.DingTalkHook) (err error)
 		return
 	}
 
-	if robotURL != "" {
-		hook = &model.DingTalkHook{robotURL, token, secret}
+	if robotURL != "" || token != "" {
+		hook = &model.DingTalkHook{
+			Url:    robotURL,
+			Token:  token,
+			Secret: secret,
+		}
 	}
 
 	robotURL, err = hook.GetRequestUrl()
 	if err != nil {
 		return
 	}
-	fmt.Println(robotURL)
+
 	req, err := http.NewRequest(
 		"POST",
 		robotURL,
