@@ -1,10 +1,10 @@
-FROM golang:1.13
-WORKDIR /go/src/github.com/yunlzheng/alertmanaer-dingtalk-webhook/
+FROM golang:1.16.2 as builder
+WORKDIR /alertmanaer-dingtalk-webhook
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app cmd/webhook/webhook.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOARM=6 go build -a -installsuffix cgo -o app .
 
-FROM alpine:latest  
+FROM alpine:3.16.2
 RUN apk --no-cache add ca-certificates
-WORKDIR /root/
-COPY --from=0 /go/src/github.com/yunlzheng/alertmanaer-dingtalk-webhook/app .
-ENTRYPOINT ["./app"]
+WORKDIR /data
+COPY --from=builder /alertmanaer-dingtalk-webhook/app /data/
+ENTRYPOINT ["./app", "-secret=xxxxxx", "-token=xxxxx"]

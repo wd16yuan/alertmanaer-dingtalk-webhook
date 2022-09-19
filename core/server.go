@@ -11,9 +11,7 @@ import (
 func RunServer(hook *model.DingTalkHook) {
 	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "404",
-		})
+		c.String(http.StatusOK, "Welcome to dingtalk alarm sending api!")
 	})
 	authorized := router.Group("/", gin.BasicAuth(gin.Accounts{
 		"gY725qUW": "_D6Nc62-nr=xXw4D_=-qqUrU54c=sc3k",

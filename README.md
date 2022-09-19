@@ -40,3 +40,13 @@ groups:
       dingtalkToken: "ciphertext format"
       dingtalkSecret: "ciphertext format"
 ```
+
+Build Docker image
+
+```shell
+# docker build -t dingtalk-Webhook:v1 .
+# docker run --rm -p 8002:8080 dingtalk-Webhook:v1
+# curl http://127.0.0.1:8002
+Welcome to dingtalk alarm sending api!
+```
+
