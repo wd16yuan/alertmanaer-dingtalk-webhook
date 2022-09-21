@@ -34,7 +34,7 @@ func TransformToMarkdown(notification model.Notification) (markdown *model.DingT
 	for _, alert := range notification.Alerts {
 		annotations := alert.Annotations
 		buffer.WriteString(fmt.Sprintf("##### %s\n > %s\n", annotations["summary"], annotations["description"]))
-		buffer.WriteString(fmt.Sprintf("\n> 开始时间：%s\n", alert.StartsAt.In(cstSh).Format("15:04:05")))
+		buffer.WriteString(fmt.Sprintf("\n> 开始时间：%s\n", alert.StartsAt.In(cstSh).Format("2006-01-02 15:04:05")))
 	}
 
 	markdown = &model.DingTalkMarkdown{
